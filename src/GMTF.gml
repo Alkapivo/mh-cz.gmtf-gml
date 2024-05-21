@@ -189,6 +189,13 @@ function gmtf(style_struct = null) constructor {
 
 		global.GMTF_DATA.active = this
 		global.GMTF_DATA.jumped = false
+
+		if (Optional.is(this.uiItem) 
+			&& Optional.is(this.uiItem.context) 
+			&& Optional.is(this.uiItem.context.updateTimer)) {
+			
+			this.uiItem.context.updateTimer.time = this.uiItem.context.updateTimer.duration
+		}
 		return this
 	}
 	
