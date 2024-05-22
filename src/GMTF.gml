@@ -201,6 +201,13 @@ function gmtf(style_struct = null) constructor {
 	
 	///@return {gmtf}
 	unfocus = function() {
+		if (Optional.is(this.uiItem) 
+			&& Optional.is(this.uiItem.context) 
+			&& Optional.is(this.uiItem.context.updateTimer)) {
+			
+			this.uiItem.context.updateTimer.time = this.uiItem.context.updateTimer.duration
+		}
+		
 		global.GMTF_DATA.active = undefined
 		return this
 	}
