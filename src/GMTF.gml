@@ -372,6 +372,10 @@ function GMTF(style_struct = null) constructor {
 			chw = char[1]
 			wid += chw
 			var nl = wid >= pad_w
+			if (!this.style.v_grow && !this.style.trim) {
+				nl = false
+			}
+
 			var enter = ch == this.symbolEnter
 			if (nl) {
 				ds_list_insert(chars, i++, [ this.symbolNewLine, 0 ])
