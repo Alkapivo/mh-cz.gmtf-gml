@@ -65,25 +65,30 @@ function _GMTFContext(config = {}) constructor {
 				if (!this.uiWasScrolled) {
 					if (Core.isType(uiTextField.context, UI) 
 						&& Core.isType(uiTextField.context.area, Rectangle)) {
+
+						var mx = MouseUtil.getMouseX() - uiTextField.context.area.getX()
+						var my = MouseUtil.getMouseY() - uiTextField.context.area.getY()
 						
 						// horizontal offset
-						var itemX = uiTextField.area.getX()
+						var itemX = uiTextField.area.getX() + this.current.cursor1.cx
 						var itemWidth = uiTextField.area.getWidth()
 						var offsetX = abs(uiTextField.context.offset.x)
 						var areaWidth = uiTextField.context.area.getWidth()
-						if ((itemX < offsetX && itemX + itemWidth < offsetX) 
-							|| (itemX > offsetX + areaWidth && itemX + itemWidth > offsetX + areaWidth)) {
-								uiTextField.context.offset.x = -1 * itemX
+						var itemRight = itemX + itemWidth
+						if (itemX < offsetX || itemRight > offsetX + areaWidth) {
+							var newX = (itemX < offsetX) ? itemX : itemRight - areaWidthq
+							uiTextField.context.offset.x = -1 * clamp(newX, 0.0, abs(uiTextField.context.offsetMax.x))
 						}
 		
 						// vertical offset
-						var itemY = uiTextField.area.getY()
-						var itemHeight = uiTextField.area.getHeight()
+						var itemY = uiTextField.area.getY() + this.current.cursor1.cy
+						var itemHeight = this.current.style.lh
 						var offsetY = abs(uiTextField.context.offset.y)
 						var areaHeight = uiTextField.context.area.getHeight()
-						if ((itemY < offsetY && itemY + itemHeight < offsetY) 
-							|| (itemY > offsetY + areaHeight && itemY + itemHeight > offsetY + areaHeight)) {
-								uiTextField.context.offset.y = -1 * itemY
+						var itemBottom = itemY + itemHeight
+						if (itemY < offsetY || itemBottom > offsetY + areaHeight) {
+							var newY = (itemY < offsetY) ? itemY : itemBottom - areaHeight
+							uiTextField.context.offset.y = -1 * clamp(newY, 0.0, abs(uiTextField.context.offsetMax.y))
 						}
 					}
 					this.uiWasScrolled = true
@@ -165,7 +170,7 @@ function GMTF(style_struct = null) constructor {
 		char_limit: infinity,
 		letter_case: 0,
 		min_chw: 0,
-		stoppers: " .,()[]{}<>?|:\\+-*/=" + this.symbolEnter,
+		stoppers: " .,()[]{}<>?|:\\+-*/=" + this.symbolEnter + this.symbolNewLine + "\n",
 		v_grow: false,
 		trim: false,
 	}
@@ -186,8 +191,8 @@ function GMTF(style_struct = null) constructor {
 	pad_w = 0
 	pad_h = 0
 	
-	cursor1 = { pos: 0, line: lines[| 0], cx: 0, cy: 0, cxs: 0 } ///@todo rename, class & factory
-	cursor2 = { pos: 0, line: lines[| 0], cx: 0, cy: 0, cxs: 0 } ///@todo rename, class & factory
+	cursor1 = { pos: 0, rel_pos: 0, line: lines[| 0], cx: 0, cy: 0, cxs: 0 } ///@todo rename, class & factory
+	cursor2 = { pos: 0, rel_pos: 0, line: lines[| 0], cx: 0, cy: 0, cxs: 0 } ///@todo rename, class & factory
 	
 	has_focus = false
 	gamespd = 60
@@ -247,6 +252,16 @@ function GMTF(style_struct = null) constructor {
 		}
 		
 		GMTFContext.set(null)
+		cursor1.pos = 0
+		cursor1.line =  lines[| 0]
+		cursor1.cx = 0
+		cursor1.cy = 0
+		cursor1.cxs = 0
+		cursor2.pos = 0
+		cursor2.line =  lines[| 0]
+		cursor2.cx = 0
+		cursor2.cy = 0
+		cursor2.cxs = 0
 		return this
 	}
 	
@@ -554,6 +569,9 @@ function GMTF(style_struct = null) constructor {
 	}
 	
 	moveCursor = function(curs, r = 0, d = 0, ctrl = false) {
+		if (GMTFContext.get() == this) {
+			GMTFContext.uiWasScrolled = false
+		}
 		if (r != 0) {
 			if (!ctrl) {
 				curs.pos = clamp(curs.pos + r, 0, ds_list_size(chars))
@@ -901,7 +919,7 @@ function GMTF(style_struct = null) constructor {
 		}
 	
 		if (keyboard_check(vk_anykey)) {
-			if (keyboard_check_pressed(vk_home)) {
+			if (keyboard_check_pressed(KeyboardKeyType.PAGE_UP)) {
 				this.cursor1.pos = 0
 				this.cursor1.line = this.lines[| 0]
 				this.cursor2.pos = 0
@@ -910,13 +928,23 @@ function GMTF(style_struct = null) constructor {
 				this.updateCursor(this.cursor2)
 			}
 
-			if (keyboard_check_pressed(vk_end)) {
+			if (keyboard_check_pressed(KeyboardKeyType.PAGE_DOWN)) {
 				this.cursor1.pos = ds_list_size(this.chars) - 1
 				this.cursor1.line = this.lines[| ds_list_size(this.lines) - 1]
 				this.cursor2.pos = ds_list_size(this.chars) - 1
 				this.cursor2.line = this.lines[| ds_list_size(this.lines) - 1]
 				this.updateCursor(this.cursor1)
 				this.updateCursor(this.cursor2)
+			}
+
+			if (keyboard_check_pressed(KeyboardKeyType.HOME)) {
+				this.moveCursor(this.cursor1, -1 * this.cursor1.rel_pos, 0, false)
+				this.moveCursor(this.cursor2, -1 * this.cursor2.rel_pos, 0, false)
+			}
+
+			if (keyboard_check_pressed(KeyboardKeyType.END)) {
+				this.moveCursor(this.cursor1, String.size(this.cursor1.line[3]) - this.cursor1.rel_pos, 0, false)
+				this.moveCursor(this.cursor2, String.size(this.cursor2.line[3]) - this.cursor2.rel_pos, 0, false)
 			}
 
 			if (keyboard_check(vk_control)) {
@@ -956,8 +984,14 @@ function GMTF(style_struct = null) constructor {
 		return this
 	}
 
+	bugDelay = false
+
   ///@return {GMTF}
 	onMousePressed = function() {
+		if (!this.isFocused()) {
+			return this
+		}
+
 		if mouse_check_button_pressed(mb_left) {
 			if point_in_rectangle(mx, my, atx, aty, atx + style.w, aty + style.h) {
 				this.focus()
@@ -965,10 +999,22 @@ function GMTF(style_struct = null) constructor {
 				this.unfocus()
 			}
 
+			this.bugDelay = false
 			this.cursorToMouse(cursor2)
 			this.copyCursorInfo(cursor2, cursor1)
-		} else if (mouse_check_button(mb_left)) {
-			this.cursorToMouse(cursor1)
+			if (GMTFContext.get() == this) {
+				GMTFContext.uiWasScrolled = false
+			}
+		} else if (mouse_check_button(mb_left) && !mouse_check_button_released(mb_left)) {
+			if (this.bugDelay) {
+				this.cursorToMouse(cursor1)
+			} else {
+				this.cursorToMouse(cursor2)
+				this.copyCursorInfo(cursor2, cursor1)
+			}
+			this.bugDelay = true
+		} else {
+			this.bugDelay = false
 		}
 
 		return this
