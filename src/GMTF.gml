@@ -76,7 +76,7 @@ function _GMTFContext(config = {}) constructor {
 						var areaWidth = uiTextField.context.area.getWidth()
 						var itemRight = itemX + itemWidth
 						if (itemX < offsetX || itemRight > offsetX + areaWidth) {
-							var newX = (itemX < offsetX) ? itemX : itemRight - areaWidthq
+							var newX = (itemX < offsetX) ? itemX : itemRight - areaWidth
 							uiTextField.context.offset.x = -1 * clamp(newX, 0.0, abs(uiTextField.context.offsetMax.x))
 						}
 		
