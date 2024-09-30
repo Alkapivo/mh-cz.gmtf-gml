@@ -1121,3 +1121,8 @@ function GMTF(style_struct = null) constructor {
 
 	this.updateStyle(style_struct)
 }
+
+
+function initGMTF() {
+	GMTFContext = new _GMTFContext()
+}
