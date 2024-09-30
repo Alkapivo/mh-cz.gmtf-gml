@@ -66,9 +66,6 @@ function _GMTFContext(config = {}) constructor {
 					if (Core.isType(uiTextField.context, UI) 
 						&& Core.isType(uiTextField.context.area, Rectangle)) {
 
-						var mx = MouseUtil.getMouseX() - uiTextField.context.area.getX()
-						var my = MouseUtil.getMouseY() - uiTextField.context.area.getY()
-						
 						// horizontal offset
 						var itemX = uiTextField.area.getX() + this.current.cursor1.cx
 						var itemWidth = uiTextField.area.getWidth()
@@ -81,15 +78,16 @@ function _GMTFContext(config = {}) constructor {
 						}
 		
 						// vertical offset
-						Core.print("my", my)
-						var itemY = uiTextField.area.getY() + my// + this.current.cursor1.cy
+						var itemY = uiTextField.area.getY()
 						var itemHeight = this.current.style.lh
 						var offsetY = abs(uiTextField.context.offset.y)
 						var areaHeight = uiTextField.context.area.getHeight()
 						var itemBottom = itemY + itemHeight
-						var scrollYBug = (itemY < offsetY && itemBottom < offsetY + areaHeight)
-							|| (itemY < offsetY && itemBottom > offsetY + areaHeight)
-							|| (itemY >= offsetY && itemY < offsetY + areaHeight)
+						var scrollYBug = Math.rectangleOverlaps(
+							0, offsetY, 10, offsetY + areaHeight, 
+							0, itemY, 10, itemBottom
+						)
+					
 						if (!scrollYBug && (itemY < offsetY || itemBottom > offsetY + areaHeight)) {
 							var newY = (itemY < offsetY) ? itemY : itemBottom - areaHeight
 							uiTextField.context.offset.y = -1 * clamp(newY, 0.0, abs(uiTextField.context.offsetMax.y))
