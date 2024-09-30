@@ -81,12 +81,16 @@ function _GMTFContext(config = {}) constructor {
 						}
 		
 						// vertical offset
-						var itemY = uiTextField.area.getY() + this.current.cursor1.cy
+						Core.print("my", my)
+						var itemY = uiTextField.area.getY() + my// + this.current.cursor1.cy
 						var itemHeight = this.current.style.lh
 						var offsetY = abs(uiTextField.context.offset.y)
 						var areaHeight = uiTextField.context.area.getHeight()
 						var itemBottom = itemY + itemHeight
-						if (itemY < offsetY || itemBottom > offsetY + areaHeight) {
+						var scrollYBug = (itemY < offsetY && itemBottom < offsetY + areaHeight)
+							|| (itemY < offsetY && itemBottom > offsetY + areaHeight)
+							|| (itemY >= offsetY && itemY < offsetY + areaHeight)
+						if (!scrollYBug && (itemY < offsetY || itemBottom > offsetY + areaHeight)) {
 							var newY = (itemY < offsetY) ? itemY : itemBottom - areaHeight
 							uiTextField.context.offset.y = -1 * clamp(newY, 0.0, abs(uiTextField.context.offsetMax.y))
 						}
