@@ -48,18 +48,29 @@ function _GMTFContext(config = {}) constructor {
 		}
 
 	///@return {GMTFContext}
-	update = Core.isType(Struct.get(config, "update"), Callable)
+	updateBegin = Core.isType(Struct.get(config, "update"), Callable)
 		? method(this, config.update)
 		: function() {
 			if (this.timer == null) {
 				this.timer = new Timer(3.0, { loop: Infinity })
 			}
 			
+			if (this.current != null 
+					&& this.current.uiItem != null 
+					&& mouse_check_button_pressed(mb_left) 
+					&& current.has_focus 
+					&& !point_in_rectangle(
+						device_mouse_x_to_gui(0) - this.current.surface.x, 
+						device_mouse_y_to_gui(0) - this.current.surface.y, 
+						this.current.atx, 
+						this.current.aty, 
+						this.current.atx + this.current.style.w, 
+						this.current.aty + this.current.style.h)) {
+				this.current.unfocus()
+			}
+
 			if (this.current != null && this.current.uiItem != null) {
 				var uiTextField = this.current.uiItem
-				if (mouse_check_button_pressed(mb_left)) {
-					this.current.unfocus()
-				}
 
 				// scroll offset to item
 				if (!this.uiWasScrolled) {
@@ -994,8 +1005,8 @@ function GMTF(style_struct = null) constructor {
 			return this
 		}
 
-		if mouse_check_button_pressed(mb_left) {
-			if point_in_rectangle(mx, my, atx, aty, atx + style.w, aty + style.h) {
+		if (mouse_check_button_pressed(mb_left)) {
+			if (point_in_rectangle(mx, my, atx, aty, atx + style.w, aty + style.h)) {
 				this.focus()
 			} else if (has_focus) {
 				this.unfocus()
