@@ -902,7 +902,19 @@ function GMTF(style_struct = null) constructor {
 					this.moveCursor(cursor1, 0, 1)
 					break
 				case vk_enter:
-					keyboard_string += this.symbolEnter;
+					if (this.style.v_grow) {
+						keyboard_string += this.symbolEnter;
+					} else {
+						var nextTextField = this.findEnabledNext(this)
+							if (Optional.is(nextTextField)) {
+								nextTextField.focus()
+								GMTFContext.switchTick = 2
+							} else {
+								if (this.has_focus) {
+									this.unfocus()
+								}
+							}
+					}
 					break
 				case vk_tab:
 					keyboard_string = "";
