@@ -942,6 +942,14 @@ function GMTF(style_struct = null) constructor {
 				case vk_delete:
 					this.remove(false, keyboard_check(vk_control))
 					break
+        case vk_escape:
+          if (this.has_focus) {
+            if (Core.isType(this.uiItem, UIItem)) {
+              this.setText(this.uiItem.value)
+            }
+            this.unfocus()
+          }
+          break
 			}
 		}
 	
