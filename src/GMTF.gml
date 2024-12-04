@@ -654,7 +654,7 @@ function GMTF(style_struct = null) constructor {
 				pad_atx + cursor1.cx, 
 				pad_aty + cursor1.cy, 
 				pad_atx + cursor2.cx, 
-				pad_aty + cursor2.cy + style.lh - 1, 
+				pad_aty + cursor2.cy + style.lh, 
 				false
 			)
 		} else {
@@ -664,14 +664,14 @@ function GMTF(style_struct = null) constructor {
 				pad_atx + upper.cx,
 				pad_aty + upper.cy,
 				pad_atx + getRangeWidth(upper.line[1], upper.line[2]),
-				pad_aty + upper.cy + style.lh - 1,
+				pad_aty + upper.cy + style.lh,
 				false
 			)
 			draw_rectangle(
 				pad_atx,
 				pad_aty + lower.cy,
 				pad_atx + getRangeWidth(lower.line[1], lower.pos),
-				pad_aty + lower.cy + style.lh - 1,
+				pad_aty + lower.cy + style.lh,
 				false
 			)
 
@@ -681,7 +681,7 @@ function GMTF(style_struct = null) constructor {
 					pad_atx,
 					pad_aty + i * style.lh,
 					pad_atx + getRangeWidth(line[1], line[2]),
-					pad_aty + i * style.lh + style.lh - 1,
+					pad_aty + i * style.lh + style.lh,
 					false
 				)
 			}
