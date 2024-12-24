@@ -1,10 +1,6 @@
 ///@package io.mh-cz.gmtf
 ///@description https://github.com/mh-cz/Gamemaker-Multiline-Text-Field/tree/main
 
-///@type {Number}
-#macro GMTF_DECIMAL 6
-
-
 ///@params {Struct} [config]
 function _GMTFContext(config = {}) constructor {
 
@@ -190,6 +186,8 @@ function GMTF(style_struct = null) constructor {
 		trim: false,
 	}
 
+  GMTF_DECIMAL = Struct.getIfType(style_struct, "GMTF_DECIMAL", Number, 8)
+
 	lines = ds_list_create() ///@todo memory leak?
 	chars = ds_list_create() ///@todo memory leak?
 	lines[| 0] = [ 0, 0, 0, "" ] ///@todo class & factory
@@ -252,6 +250,7 @@ function GMTF(style_struct = null) constructor {
 			&& Optional.is(this.uiItem.context) 
 			&& Optional.is(this.uiItem.context.updateTimer)) {
 			
+      ///@updateTimerNow
 			this.uiItem.context.updateTimer.time = this.uiItem.context.updateTimer.duration
 		}
 		return this
@@ -263,6 +262,7 @@ function GMTF(style_struct = null) constructor {
 			&& Optional.is(this.uiItem.context) 
 			&& Optional.is(this.uiItem.context.updateTimer)) {
 			
+      ///@updateTimerNow
 			this.uiItem.context.updateTimer.time = this.uiItem.context.updateTimer.duration
 		}
 		
@@ -295,11 +295,18 @@ function GMTF(style_struct = null) constructor {
 			var len = array_length(keys)
 			for (var i = 0; i < len; i++) {
 				var key = keys[i]
+        if (!Struct.contains(this, key) && !Struct.contains(this.style, key)) {
+          continue
+        }
+
         if (key == "font") {
           var font = FontUtil.fetch(style_struct[$ key])
-          style_struct[$ key] = font == null ? -1 : font.asset
+          style[$ key] = Optional.is(font) ? font.asset : style[$ key]
+          update_lines = true
+          continue
         }
-        
+
+        ///@bug
 				style[$ key] = style_struct[$ key];
 				switch(key) {
 					case "w":
@@ -729,10 +736,10 @@ function GMTF(style_struct = null) constructor {
   		cursor1.pos = 0
   		cursor2.pos = 0
       if (Core.isType(txt, Number)) {
-        var parsed = string_format(txt, 1, GMTF_DECIMAL) 
+        var parsed = string_format(txt, 1, this.GMTF_DECIMAL) 
         var length = string_length(parsed)
         var trim = length
-        for (var index = 0; index < GMTF_DECIMAL; index++) {
+        for (var index = 0; index < this.GMTF_DECIMAL; index++) {
           trim = length - index
           var char = string_char_at(parsed, trim)
           if (char != "0") {
