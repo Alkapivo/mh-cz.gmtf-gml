@@ -1,7 +1,7 @@
 ///@package io.mh-cz.gmtf
 ///@description https://github.com/mh-cz/Gamemaker-Multiline-Text-Field/tree/main
 
-///@params {Struct} [config]
+///@param {Struct} [config]
 function _GMTFContext(config = {}) constructor {
 
 	///@type {?GMTF}
@@ -246,26 +246,15 @@ function GMTF(style_struct = null) constructor {
 
 		GMTFContext.set(this).uiWasScrolled = false
 
-		if (Optional.is(this.uiItem) 
-			&& Optional.is(this.uiItem.context) 
-			&& Optional.is(this.uiItem.context.updateTimer)) {
-			
-      ///@updateTimerNow
-			this.uiItem.context.updateTimer.time = this.uiItem.context.updateTimer.duration
+		if (Optional.is(this.uiItem) && Optional.is(this.uiItem.context)) {
+			this.uiItem.context.finishUpdateTimer()
 		}
+
 		return this
 	}
 	
 	///@return {GMTF}
 	unfocus = function() {
-		if (Optional.is(this.uiItem) 
-			&& Optional.is(this.uiItem.context) 
-			&& Optional.is(this.uiItem.context.updateTimer)) {
-			
-      ///@updateTimerNow
-			this.uiItem.context.updateTimer.time = this.uiItem.context.updateTimer.duration
-		}
-		
 		GMTFContext.set(null)
 		cursor1.pos = 0
 		cursor1.line =  lines[| 0]
@@ -277,6 +266,11 @@ function GMTF(style_struct = null) constructor {
 		cursor2.cx = 0
 		cursor2.cy = 0
 		cursor2.cxs = 0
+
+    if (Optional.is(this.uiItem) && Optional.is(this.uiItem.context)) {
+			this.uiItem.context.finishUpdateTimer()
+		}
+
 		return this
 	}
 	
@@ -308,7 +302,7 @@ function GMTF(style_struct = null) constructor {
 
         ///@bug
 				style[$ key] = style_struct[$ key];
-				switch(key) {
+				switch (key) {
 					case "w":
 					case "h":
 					case "lh":
@@ -727,7 +721,7 @@ function GMTF(style_struct = null) constructor {
 		this.updateCursor(cursor1, true, cursor2)
 	}
 	
-  ///@params {any} text
+  ///@param {any} text
   ///@return {GMTF}
 	setText = function(txt) {
     try {
@@ -833,8 +827,8 @@ function GMTF(style_struct = null) constructor {
 		}
 	}
   
-	///@params {Number} x
-  ///@params {Number} y
+	///@param {Number} x
+  ///@param {Number} y
   ///@return {GMTF}
 	updateFocused = function(x, y) {
 		atx = x
@@ -1062,8 +1056,8 @@ function GMTF(style_struct = null) constructor {
 		return this
 	}
 
-  ///@params {Number} x
-  ///@params {Number} y
+  ///@param {Number} x
+  ///@param {Number} y
   ///@return {GMTF}
   update = function(x, y) {
      this.surface.x = x
@@ -1071,8 +1065,8 @@ function GMTF(style_struct = null) constructor {
      return this
   }
 
-	///@params {Number} x
-  ///@params {Number} y
+	///@param {Number} x
+  ///@param {Number} y
   ///@return {GMTF}
 	draw = function(x, y) {
 		atx = x
