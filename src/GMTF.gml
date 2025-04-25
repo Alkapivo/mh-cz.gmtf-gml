@@ -452,6 +452,17 @@ function GMTF(style_struct = null) constructor {
 			ds_list_add(chars, [ this.symbolEnd, 0 ])
 		} 
 		
+    if (this.style.v_grow) {
+      var _h = this.style.lh
+        * ds_list_size(this.lines)
+        + this.style.padding.top 
+        + this.style.padding.bottom
+      if (_h != this.style.h) {
+        this.style.h = _h
+        this.updateStyle()
+      }
+    }
+
 		return fit_ok
 	}
 
@@ -958,31 +969,47 @@ function GMTF(style_struct = null) constructor {
 	
 		if (keyboard_check(vk_anykey)) {
 			if (keyboard_check_pressed(KeyboardKeyType.PAGE_UP)) {
+        if (GMTFContext.get() == this) {
+          GMTFContext.uiWasScrolled = false
+        }
+
 				this.cursor1.pos = 0
 				this.cursor1.line = this.lines[| 0]
-				this.cursor2.pos = 0
-				this.cursor2.line = this.lines[| 0]
 				this.updateCursor(this.cursor1)
-				this.updateCursor(this.cursor2)
+        if (!keyboard_check(vk_shift)) {
+          this.cursor2.pos = 0
+          this.cursor2.line = this.lines[| 0]
+          this.updateCursor(this.cursor2)
+        }
 			}
 
 			if (keyboard_check_pressed(KeyboardKeyType.PAGE_DOWN)) {
+        if (GMTFContext.get() == this) {
+          GMTFContext.uiWasScrolled = false
+        }
+
 				this.cursor1.pos = ds_list_size(this.chars) - 1
 				this.cursor1.line = this.lines[| ds_list_size(this.lines) - 1]
-				this.cursor2.pos = ds_list_size(this.chars) - 1
-				this.cursor2.line = this.lines[| ds_list_size(this.lines) - 1]
 				this.updateCursor(this.cursor1)
-				this.updateCursor(this.cursor2)
+        if (!keyboard_check(vk_shift)) {
+          this.cursor2.pos = ds_list_size(this.chars) - 1
+          this.cursor2.line = this.lines[| ds_list_size(this.lines) - 1]
+          this.updateCursor(this.cursor2)
+        } 
 			}
 
 			if (keyboard_check_pressed(KeyboardKeyType.HOME)) {
 				this.moveCursor(this.cursor1, -1 * this.cursor1.rel_pos, 0, false)
-				this.moveCursor(this.cursor2, -1 * this.cursor2.rel_pos, 0, false)
+        if (!keyboard_check(vk_shift)) {
+          this.moveCursor(this.cursor2, -1 * this.cursor2.rel_pos, 0, false)
+        }
 			}
 
 			if (keyboard_check_pressed(KeyboardKeyType.END)) {
 				this.moveCursor(this.cursor1, String.size(this.cursor1.line[3]) - this.cursor1.rel_pos, 0, false)
-				this.moveCursor(this.cursor2, String.size(this.cursor2.line[3]) - this.cursor2.rel_pos, 0, false)
+        if (!keyboard_check(vk_shift)) {
+				  this.moveCursor(this.cursor2, String.size(this.cursor2.line[3]) - this.cursor2.rel_pos, 0, false)
+        }
 			}
 
 			if (keyboard_check(vk_control)) {
