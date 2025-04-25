@@ -87,8 +87,8 @@ function _GMTFContext(config = {}) constructor {
 						}
 		
 						// vertical offset
-						var itemY = uiTextField.area.getY()
-						var itemHeight = uiTextField.area.getHeight()
+						var itemY = uiTextField.area.getY() + this.current.cursor1.cy
+						var itemHeight = this.current.style.lh //uiTextField.area.getHeight() - this.current.cursor1.cy
 						var offsetY = abs(uiTextField.context.offset.y)
 						var areaHeight = uiTextField.context.area.getHeight()
 						var itemBottom = itemY + itemHeight
