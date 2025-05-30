@@ -831,8 +831,7 @@ function GMTF(style_struct = null) constructor {
       if (Optional.is(tf.uiItem) 
           && Optional.is(tf.uiItem.store) 
           && tf.uiItem.hidden.value
-          && Optional.is(tf.uiItem.store.getStore())) {
-        Core.print("3333")            
+          && Optional.is(tf.uiItem.store.getStore())) {         
         var store = tf.uiItem.store.getStore()
         if (Core.isType(tf.uiItem.hidden.keys, GMArray)) {
           for (var index = 0; index < GMArray.size(tf.uiItem.hidden.keys); index++) {
@@ -868,8 +867,7 @@ function GMTF(style_struct = null) constructor {
       if (Optional.is(tf.uiItem) 
           && Optional.is(tf.uiItem.store) 
           && tf.uiItem.hidden.value
-          && Optional.is(tf.uiItem.store.getStore())) {
-        Core.print("3333")            
+          && Optional.is(tf.uiItem.store.getStore())) {          
         var store = tf.uiItem.store.getStore()
         if (Core.isType(tf.uiItem.hidden.keys, GMArray)) {
           for (var index = 0; index < GMArray.size(tf.uiItem.hidden.keys); index++) {
