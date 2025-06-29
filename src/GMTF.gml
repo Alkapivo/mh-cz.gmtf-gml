@@ -240,7 +240,7 @@ function GMTF(style_struct = null) constructor {
 			GMTFContext.get().unfocus()
 		}
 
-		GMTFContext.set(this).uiWasScrolled = false
+		GMTFContext.set(this).uiWasScrolled = mouse_check_button_pressed(mb_any)
 
 		if (Optional.is(this.uiItem) && Optional.is(this.uiItem.context)) {
 			this.uiItem.context.finishUpdateTimer()
