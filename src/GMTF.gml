@@ -184,6 +184,7 @@ function GMTF(style_struct = null) constructor {
 
   GMTF_DECIMAL = Struct.getIfType(style_struct, "GMTF_DECIMAL", Number, 8)
 
+  text = ""
 	lines = new Array()
 	chars = new Array()
 	lines.add([ 0, 0, 0, "" ])
@@ -515,6 +516,8 @@ function GMTF(style_struct = null) constructor {
 		
 		this.updateCursor(cursor1, true, cursor2)
 		draw_set_font(prevfont)
+
+    this.text = this.getText()
 	}
 	
 	updateCursor = function(curs, save_cx = false, copy_to = undefined) {
@@ -727,6 +730,8 @@ function GMTF(style_struct = null) constructor {
 		
 		this.fitLines()
 		this.updateCursor(cursor1, true, cursor2)
+
+    this.text = this.getText()
 	}
 	
   ///@param {any} text
