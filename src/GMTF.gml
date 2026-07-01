@@ -1,5 +1,7 @@
 ///@package io.mh-cz.gmtf
 ///@description https://github.com/mh-cz/Gamemaker-Multiline-Text-Field/tree/main
+show_debug_message("init GMTF.gml")
+
 
 ///@param {Struct} [config]
 function _GMTFContext(config = {}) constructor {
@@ -754,7 +756,7 @@ function GMTF(style_struct = null) constructor {
           }
         }
         parsed = string_copy(parsed, 1, trim)
-        this.insert(parsed, true, true)
+        this.insert(parsed)
       } else {
 				this.insert(String.replaceAll(txt, "\n", this.symbolEnter));
       }
@@ -1239,6 +1241,7 @@ function GMTF(style_struct = null) constructor {
 }
 
 
-function initGMTF() {
+function init_GMTF() {
+  Core.print("init_GMTF")
 	GMTFContext = new _GMTFContext()
 }
